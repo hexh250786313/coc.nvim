@@ -1,3 +1,5 @@
+const chokidar = require('chokidar')
+
 const cp = require('child_process')
 let revision = 'master'
 if (process.env.NODE_ENV !== 'development') {
@@ -97,3 +99,18 @@ global.__isMain = require.main === module;`
 start().catch(e => {
   console.error(e)
 })
+
+if (process.argv.length > 2 && process.argv[2] === "--watch") {
+  const watcher = chokidar.watch(["src/**/*.*", "yalc.lock"], {
+    ignoreInitial: true,
+  });
+
+  ["change", "add", "unlink"].forEach((event) => {
+    watcher.on(event, (path) => {
+      console.log(`File ${event}: ${path}`);
+      start().catch((e) => {
+        console.error(e);
+      });
+    });
+  });
+}
