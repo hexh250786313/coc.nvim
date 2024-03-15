@@ -199,6 +199,9 @@ bar
     let content = `
 - foo
   - 111
+    hello
+    bye
+    - 222
 - bar
   - one
   - two
@@ -210,6 +213,9 @@ bar
     expect(res.lines).toEqual(`
   * foo
     * 111
+      hello
+      bye
+      * 222
   * bar
     * one
     * two

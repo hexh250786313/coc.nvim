@@ -244,11 +244,25 @@ class Renderer {
   }
 
   public listitem(text: string): string {
+    // console.log('-------', text.split("\n"))
+    const lines = text.split("\n").map((line, index, self) => {
+      if (!line.includes(BULLET_POINT) && line.startsWith("\u0020\u0020")) {
+        return line.replace(/^\u0020\u0020/, '')
+      }
+      return line
+    })
+
+    console.log('改造', lines)
+    text = lines.join('\n')
+
     let transform = this.compose(this.o.listitem, this.transform)
     let isNested = text.indexOf('\n') !== -1
     if (isNested) text = text.trim()
+    console.log('==========', text.split("\n"))
     // Use BULLET_POINT as a marker for ordered or unordered list item
-    return '\n' + BULLET_POINT + transform(text)
+    const kk = '\n' + BULLET_POINT + transform(text)
+    // console.log('+++++++++++++++', kk.split('\n'))
+    return kk
   }
 
   public checkbox(checked): string {
