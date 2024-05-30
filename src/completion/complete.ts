@@ -1,4 +1,5 @@
 'use strict'
+import complete from "../completion"
 import type { Neovim } from '@chemzqm/neovim'
 import { Position, Range } from 'vscode-languageserver-types'
 import { createLogger } from '../logger'
@@ -242,25 +243,28 @@ export default class Complete {
   }
 
   public async completeInComplete(resumeInput: string): Promise<DurationCompleteItem[] | undefined> {
-    let { document } = this
-    this.cancelInComplete()
-    let tokenSource = this.createTokenSource(true)
-    let token = tokenSource.token
-    await document.patchChange(true)
-    let { input, colnr, linenr, followWord, position } = this.option
-    Object.assign(this.option, {
-      word: resumeInput + followWord,
-      input: resumeInput,
-      line: document.getline(linenr - 1),
-      position: { line: position.line, character: position.character + resumeInput.length - input.length },
-      colnr: colnr + (resumeInput.length - input.length),
-      triggerCharacter: undefined,
-      triggerForInComplete: true
-    })
-    this.cid++
-    const sources = this.getIncompleteSources()
-    await this.completeSources(sources, tokenSource, this.cid)
-    if (token.isCancellationRequested) return undefined
+    void (async () => {
+      let { document } = this
+      this.cancelInComplete()
+      let tokenSource = this.createTokenSource(true)
+      let token = tokenSource.token
+      await document.patchChange(true)
+      let { input, colnr, linenr, followWord, position } = this.option
+      Object.assign(this.option, {
+        word: resumeInput + followWord,
+        input: resumeInput,
+        line: document.getline(linenr - 1),
+        position: { line: position.line, character: position.character + resumeInput.length - input.length },
+        colnr: colnr + (resumeInput.length - input.length),
+        triggerCharacter: undefined,
+        triggerForInComplete: true
+      })
+      this.cid++
+      const sources = this.getIncompleteSources()
+      await this.completeSources(sources, tokenSource, this.cid)
+      if (token.isCancellationRequested) return undefined
+      await complete.handleRefresh()
+    })()
     return this.filterItems(resumeInput)
   }
 
