@@ -224,19 +224,17 @@ export class Completion implements Disposable {
       this.config,
       sourceList)
     events.completing = true
-    complete.onDidRefresh(this.handleRefresh)
+    complete.onDidRefresh(async () => {
+      clearTimeout(this.triggerTimer)
+      if (complete.isEmpty) {
+        this.stop(false)
+        return
+      }
+      if (this.inserted) return
+      await this.filterResults()
+    })
     let shouldStop = await complete.doComplete()
     if (shouldStop) this.stop(false)
-  }
-
-  public handleRefresh = async (): Promise<void> => {
-    clearTimeout(this.triggerTimer)
-    if (this.complete.isEmpty) {
-      this.stop(false)
-      return
-    }
-    if (this.inserted) return
-    await this.filterResults()
   }
 
   private async onTextChangedP(_bufnr: number, info: InsertChange): Promise<void> {
