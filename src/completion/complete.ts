@@ -96,15 +96,24 @@ export default class Complete {
     return this.results.size === 0
   }
 
-  private get hasInComplete(): boolean {
+  private get hasInCompleteRes(): boolean {
     for (let result of this.results.values()) {
       if (result.isIncomplete) return true
     }
     return false
   }
 
+  private get hasIncompleteSource(): boolean {
+    return this.sources.some(s => {
+      return s.isIncompleteSource
+    })
+  }
+
   public getIncompleteSources(): ISource[] {
     return this.sources.filter(s => {
+      if (s.isIncompleteSource) {
+        return true
+      }
       let res = this.results.get(s.name)
       return res && res.isIncomplete === true
     })
@@ -317,7 +326,7 @@ export default class Complete {
 
   public async filterResults(input: string): Promise<DurationCompleteItem[] | undefined> {
     clearTimeout(this.timer)
-    if (input !== this.option.input && this.hasInComplete) {
+    if (input !== this.option.input && (this.hasInCompleteRes || this.hasIncompleteSource)) {
       void this.completeInComplete(input)
     }
     return this.filterItems(input)
