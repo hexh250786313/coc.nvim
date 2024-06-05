@@ -218,4 +218,5 @@ export interface ISource<T extends CompleteItem = CompleteItem> {
   onCompleteDone?(item: T, opt: CompleteDoneOption): ProviderResult<void>
   shouldCommit?(item: T, character: string): boolean
   dispose?(): void
+  isIncompleteSource?: boolean
 }

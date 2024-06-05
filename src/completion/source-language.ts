@@ -40,7 +40,8 @@ export default class LanguageSource implements ISource<CompletionItem> {
     public readonly documentSelector: DocumentSelector,
     public readonly triggerCharacters: string[],
     public readonly allCommitCharacters: string[],
-    public readonly priority: number | undefined
+    public readonly priority: number | undefined,
+    public readonly isIncompleteSource?: boolean,
   ) {
   }
 
