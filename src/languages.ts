@@ -150,12 +150,13 @@ class Languages {
     provider: CompletionItemProvider,
     triggerCharacters: string[] = [],
     priority?: number,
-    allCommitCharacters?: string[]
+    allCommitCharacters?: string[],
+    isIncompleteSource?: boolean,
   ): Disposable {
     selector = Is.string(selector) ? [{ language: selector }] : selector
     let sources = require('./completion/sources').default as Sources
     sources.removeSource(name)
-    return sources.createLanguageSource(name, shortcut, selector, provider, triggerCharacters, priority, allCommitCharacters)
+    return sources.createLanguageSource(name, shortcut, selector, provider, triggerCharacters, priority, allCommitCharacters, isIncompleteSource)
   }
 
   public registerCodeActionProvider(selector: DocumentSelector, provider: CodeActionProvider, clientId: string | undefined, codeActionKinds?: CodeActionKind[]): Disposable {

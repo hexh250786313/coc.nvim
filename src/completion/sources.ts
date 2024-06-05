@@ -104,7 +104,8 @@ export class Sources {
     provider: CompletionItemProvider,
     triggerCharacters: string[],
     priority?: number | undefined,
-    allCommitCharacters?: string[]
+    allCommitCharacters?: string[],
+    isIncompleteSource?: boolean,
   ): Disposable {
     let source = new LanguageSource(
       name,
@@ -113,7 +114,8 @@ export class Sources {
       selector,
       toArray(triggerCharacters),
       toArray(allCommitCharacters),
-      priority)
+      priority,
+      isIncompleteSource)
     logger.trace('created service source', name)
     this.sourceMap.set(name, source)
     return {
