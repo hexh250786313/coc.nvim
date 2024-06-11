@@ -144,8 +144,12 @@ export default class PopupMenu {
     let labels: LabelWithDetail[] = []
     let baseCharacter = characterIndex(option.line, option.col)
     let minCharacter = baseCharacter
+    let firstNotIncompleteSourceItem = -1
     // abbr kind, menu
     for (let i = 0; i < items.length; i++) {
+      if (firstNotIncompleteSourceItem === -1 && !items[i].source.isIncompleteSource) {
+        firstNotIncompleteSourceItem = i
+      }
       let item = items[i]
       if (checkMru) {
         let n = this.mruLoader.getScore(search, item, selection)
@@ -164,6 +168,9 @@ export default class PopupMenu {
       if (item.menu) menuWidth = Math.max(this.stringWidth(item.menu, true), menuWidth)
       if (item.shortcut) shortcutWidth = Math.max(this.stringWidth(item.shortcut, true) + 2, shortcutWidth)
     }
+    if (firstNotIncompleteSourceItem === -1) {
+      firstNotIncompleteSourceItem = 0
+    }
     if (selectedIndex !== -1 && search.length > 0) {
       let item = items[selectedIndex]
       // `word` and `filterText` may be different
@@ -173,7 +180,7 @@ export default class PopupMenu {
       }
     }
     if (!noselect) {
-      selectedIndex = selectedIndex == -1 ? 0 : selectedIndex
+      selectedIndex = selectedIndex == -1 ? firstNotIncompleteSourceItem : selectedIndex
     } else {
       if (selectedIndex > 0) {
         let [item] = items.splice(selectedIndex, 1)
