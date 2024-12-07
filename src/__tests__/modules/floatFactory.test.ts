@@ -225,6 +225,22 @@ describe('FloatFactory', () => {
       let pos = await nvim.call('nvim_win_get_position', [win.id])
       expect(pos).toEqual([1, 0])
     })
+
+    it('should render a float window fixed at bottom right', async () => {
+      let docs: Documentation[] = [{
+        filetype: 'markdown',
+        content: 'foo\nbar'
+      }]
+      await floatFactory.show(docs, {
+        position: 'fixed',
+        top: 9,
+        left: 10,
+      })
+      await floatFactory.activated()
+      let win = await helper.getFloat()
+      let pos = await nvim.call('nvim_win_get_position', [win.id])
+      expect(pos).toEqual([9, 10])
+    })
   })
 
   describe('events', () => {
